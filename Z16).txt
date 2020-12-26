@@ -1,0 +1,72 @@
+function mark_field(r)
+    num_vertical = moves!(r, Sud)
+    num_horizontal = moves!(r, West)
+
+    side=Ost
+    mark_row(r,side)
+    while isborder(r,side)==false
+        move!(r,Nord)
+        side=inverse(side)
+        mark_row(r,side)
+    end
+    #УТВ: Робот - у северной границы
+
+    while isborder(r,Sud)==false    
+        move!(r, Sud)
+    end
+    while isborder(r,West)==false
+        move!(r, West)
+    end
+    #УТВ: Робот - в Юго-Западном углу
+
+    moves!(r, Nord, num_vertical)
+    moves!(r, Ost, num_horizontal)
+    #УТВ: Робот - в исходном положении
+end
+
+function moves!(r::Robot, side::HorizonSide)
+    num_steps=0
+    while isborder(r,side)==false
+        move!(r,side)
+        num_steps+=1
+    end
+    return num_steps
+end
+
+function mark_row(r::Robot,side::HorizonSide)
+    putmarker!(r)
+    while move_if_posible!(r,side) == true
+        putmarker!(r)
+    end
+end
+
+function move_if_possible!(r::Robot, direct_side::HorizonSide)::Bool
+        orthogonal_side = next(direct_side)
+        reverse_side = reverse(orthogonal_side)
+        num_steps=0
+        while isborder(direct_side) == true
+            if isborder(r, orthogonal_side) == false
+                move(r, orthogonal_side)
+                num_steps += 1
+            else
+                break
+            end
+        end
+
+        if isborder(r,direct_side) == false
+            while isborder(r,reverse_side) == true
+                move!(r,direct_side)
+            end
+            result = true
+        else
+            result = false
+        end
+        move!(r,reverse_side)
+        return result
+    end
+
+function moves!(r::Robot,side::HorizonSide,num_steps::Int)
+    for _ in 1:num_steps       # символ "_" заменяет фактически не используемую переменную
+        move!(r,side)
+    end
+end
