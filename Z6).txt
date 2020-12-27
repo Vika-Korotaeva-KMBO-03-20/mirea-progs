@@ -1,0 +1,21 @@
+function mark_innerrectangle_perimetr!(r::Robot, side::HorizonSide)
+    if side == Nord
+        # обходить прямоугольник следует по часовой стрелке
+        direction_of_movement=(Nord,Ost,Sud, West)
+        direction_to_border=(Ost,Sud,West,Nord)
+    else 
+        # обходить прямоугольник следует против часовой стрелки
+        direction_of_movement=(Sud,Ost,Nord,West)
+        direction_to_border=(Ost,Nord,West,Sud)
+    end
+
+    for i ∈ 1:4   
+        putmarkers!(r,  direction_of_movement[i], direction_to_border[i]) 
+    end
+end
+
+function putmarkers!(r::Robot, direction_of_movement::HorizonSide, direction_to_border::HorizonSide)
+    while isborder(r,direction_to_border)==true
+        move!(r,direction_of_movement)
+    end
+end
